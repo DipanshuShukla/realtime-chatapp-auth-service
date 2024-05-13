@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.dipanshushukla</groupId>
-	<artifactId>realtime-chatapp-auth-service</artifactId>
+	<artifactId>realtime-chatapp-gateway-auth-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>realtime-chatapp-auth-service</name>
 	<description>Demo project for Spring Boot</description>
