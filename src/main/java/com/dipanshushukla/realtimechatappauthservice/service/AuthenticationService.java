@@ -6,8 +6,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.dipanshushukla.realtimechatappauthservice.entity.UserCredential;
-import com.dipanshushukla.realtimechatappauthservice.model.AuthenticationResponse;
+import com.dipanshushukla.realtimechatappauthservice.dto.JwtResponseDTO;
+import com.dipanshushukla.realtimechatappauthservice.dto.UserDTO;
+import com.dipanshushukla.realtimechatappauthservice.dto.UserLoginCredentialsDTO;
+import com.dipanshushukla.realtimechatappauthservice.entity.User;
 import com.dipanshushukla.realtimechatappauthservice.repository.UserCredentialRepository;
 
 @Service
@@ -27,25 +29,26 @@ public class AuthenticationService {
 
 
 
-    public AuthenticationResponse register(UserCredential request) {
-        UserCredential user = new UserCredential();
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
+    public JwtResponseDTO register(UserDTO request) {
+        User user = new User();
+        user.setFullName(request.getFullName());
         user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(request.getRole());
-
+        user.setEmail(request.getEmail());
         user.setRole(user.getRole());
 
         user = repository.save(user);
 
-        String token = jwtService.generateToken(user);
+        UserLoginCredentialsDTO userLoginCredentialsDTO = new UserLoginCredentialsDTO(user.getUsername(), user.getPassword());
 
-        return new AuthenticationResponse(token);
+        String accessToken = jwtService.generateAccessToken(userLoginCredentialsDTO.getUsername());
+        String refreshToken = jwtService.generateRefreshToken(userLoginCredentialsDTO.getUsername());
+
+        return new JwtResponseDTO(accessToken, refreshToken);
     }
 
-    public AuthenticationResponse authenticate(UserCredential request) {
+    public JwtResponseDTO authenticate(UserLoginCredentialsDTO request) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 request.getUsername(),
@@ -53,9 +56,11 @@ public class AuthenticationService {
             )
         );
         
-        UserCredential  user = repository.findByUsername(request.getUsername()).orElseThrow();
-        String token = jwtService.generateToken(user);
+        repository.findByUsername(request.getUsername()).orElseThrow();
 
-        return new AuthenticationResponse(token);
+        String accessToken = jwtService.generateAccessToken(request.getUsername());
+        String refreshToken = jwtService.generateRefreshToken(request.getUsername());
+
+        return new JwtResponseDTO(accessToken, refreshToken);
     }
 }

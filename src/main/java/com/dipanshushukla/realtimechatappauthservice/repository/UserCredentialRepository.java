@@ -1,11 +1,13 @@
 package com.dipanshushukla.realtimechatappauthservice.repository;
 
-import com.dipanshushukla.realtimechatappauthservice.entity.UserCredential;
+import com.dipanshushukla.realtimechatappauthservice.entity.User;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserCredentialRepository extends JpaRepository<UserCredential,Integer>{
-    Optional<UserCredential> findByUsername(String username);
+@Repository
+public interface UserCredentialRepository extends JpaRepository<User,Long>{
+    Optional<User> findByUsername(String username);
 }
