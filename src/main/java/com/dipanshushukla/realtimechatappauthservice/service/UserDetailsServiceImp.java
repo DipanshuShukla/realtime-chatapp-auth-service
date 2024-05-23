@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.dipanshushukla.realtimechatappauthservice.repository.UserCredentialRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UserDetailsServiceImp implements UserDetailsService {
 
@@ -16,7 +18,7 @@ public class UserDetailsServiceImp implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username Not Found"));
+        return repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("No username found with username: " + username));
     }
 
 }
